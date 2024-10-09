@@ -22,7 +22,7 @@ static int letter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
 static int round_over = 0;
-static int num_rounds = 5;
+static int num_rounds = 3;
 static int round = 0;
 
 static char stats[11];
@@ -125,7 +125,10 @@ void calculate_game() {
     }
 
     while (1) {
+        pacer_wait();
+        tinygl_update();
         display_character(letter);
+
     }
 }
 
