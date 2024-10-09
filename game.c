@@ -17,7 +17,7 @@
 #include "button.h"
 
 #define PACER_RATE 500
-#define MESSAGE_RATE 15
+#define MESSAGE_RATE 18
 
 static int letter = 0;
 static int letter_recieved = 10;
@@ -146,11 +146,11 @@ char* build_result_string(int won) {
     int rounds_lost = num_rounds - won;
 
     if (won > rounds_lost) {
-        snprintf(result_string, 80, "You Win! Won %d/%d rounds", won, num_rounds);
+        snprintf(result_string, 80, "You Win! Won %d/%d ", won, num_rounds);
     } else if (rounds_lost > won) {
-        snprintf(result_string, 80, "You Lose! Won %d/%d rounds", won, num_rounds);
+        snprintf(result_string, 80, "You Lose! Won %d/%d ", won, num_rounds);
     } else if (rounds_lost == won) {
-        snprintf(result_string, 80, "You drew! Won %d/%d rounds, Lost %d/%d rounds", won, num_rounds, rounds_lost, num_rounds);
+        snprintf(result_string, 80, "You Drew! Won %d/%d Lost %d/%d ", won, num_rounds, rounds_lost, num_rounds);
     }
     return result_string;
 }
