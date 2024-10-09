@@ -11,6 +11,7 @@
 #include "pio.h"
 #include "navswitch.h"
 #include "../fonts/font5x5_1.h"
+#include "ir_uart.h"
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
@@ -68,6 +69,7 @@ int main (void)
     start_tinygl();
     navswitch_init();
     pacer_init (500);
+    ir_uart_init();
 
     while (1)
     {
@@ -88,7 +90,13 @@ int main (void)
            increment();
         }
         if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
-           // SEND TO THE OPONENT
+           ir_uart_putc(letter);
+        }
+        if (ir_uart_read_ready_p()) {
+            int temp_character = ir_uart_getc();
+            if (0 <= temp_character && temp_character <= 255) {
+                letter = temp_character;
+            }
         }
         display_character(letter);
 
