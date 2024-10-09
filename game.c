@@ -89,26 +89,22 @@ void decrement ()
 void check_winner() {
     while (1) {
 
-    if (letter_sent == letter_recieved) {
-        letter = 3;
+        if (letter_sent == letter_recieved) {
+            letter = 3;
+        } else if (letter_sent == 0 && letter_recieved == 1) {
+                letter = 4;
+        } else if (letter_sent == 1 && letter_recieved == 2) {
+                letter = 4;
+        } else if (letter_sent == 2 && letter_recieved == 0) {
+                letter = 4;
+        } else {
+                letter = 5;
+        }
+
+        letter_recieved = 10;
+        letter_sent = 10;
+        display_character(letter);
     }
-
-    if (letter_sent == 0 && letter_recieved == 1) {
-            letter = 4;
-    } else if (letter_sent == 1 && letter_recieved == 2) {
-            letter = 4;
-    } else if (letter_sent == 2 && letter_recieved == 0) {
-            letter = 4;
-    } else {
-            letter = 5;
-    }
-    letter_recieved = 10;
-    letter_sent = 10;
-    display_character(letter);
-
-    }
-
-
 }
 
 int main (void)
@@ -142,7 +138,6 @@ int main (void)
            letter_sent = letter;
            if (letter_recieved != 10) {
                 check_winner();
-                break;
            }
 
         }
@@ -152,7 +147,6 @@ int main (void)
                 letter_recieved = temp_character;
                 if (letter_sent != 10) {
                     check_winner();
-                    break;
                 }
             }
         }
