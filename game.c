@@ -12,6 +12,7 @@
 #include "navswitch.h"
 #include "../fonts/font5x5_1.h"
 #include "ir_uart.h"
+#include "button.h"
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
@@ -37,6 +38,7 @@ void start_tinygl(void) {
     tinygl_font_set (&font5x5_1);
     tinygl_text_speed_set (MESSAGE_RATE);
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+    button_init();
 
 }
 
@@ -139,12 +141,13 @@ int main (void)
             }
         }
 
-        // if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
-        //     letter = 0;
-        //     letter_recieved = 10;
-        //     letter_sent = 10;
-        //     game_over = 0;
-        //     }
+        button_update ();
+        if (button_push_event_p(0)) {
+            letter = 0;
+            letter_recieved = 10;
+            letter_sent = 10;
+            game_over = 0;
+            }
 
         display_character(letter);
 
