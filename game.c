@@ -72,16 +72,20 @@ void decrement ()
 
 void check_winner() {
 
-        if (letter_sent == letter_recieved) {
+        if (letter_sent == letter_recieved) { // same so tie
             letter = 3;
-        } else if (letter_sent == 0 && letter_recieved == 1) {
-                letter = 4;
-        } else if (letter_sent == 1 && letter_recieved == 2) {
-                letter = 4;
-        } else if (letter_sent == 2 && letter_recieved == 0) {
-                letter = 4;
-        } else {
-            letter = 5;
+        } else if (letter_sent == 0 && letter_recieved == 1) { // paper < scissors L
+                letter = 5;
+        } else if (letter_sent == 1 && letter_recieved == 2) { // scissors < rock L
+                letter = 5;
+        } else if (letter_sent == 2 && letter_recieved == 0) { // rock < paper L
+                letter = 5;
+        } else if (letter_sent == 2 && letter_recieved == 1) { // rock > scissors W
+            letter = 4;
+        } else if (letter_sent == 0 && letter_recieved == 2) { // paper > rock W
+            letter = 4;
+        } else if (letter_sent == 1 && letter_recieved == 0) { // scissors > paper W
+            letter = 4;
         }
 
         letter_recieved = 10;
@@ -134,6 +138,13 @@ int main (void)
                 }
             }
         }
+
+        if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
+            letter = 0;
+            letter_recieved = 10;
+            letter_sent = 10;
+            game_over = 0;
+            }
 
         display_character(letter);
 
