@@ -17,6 +17,8 @@
 #define MESSAGE_RATE 10
 
 static int letter = 0;
+static int letter_recieved = 3;
+static int letter_sent = 3;
 
 static const char charmap[] =
 {
@@ -63,6 +65,50 @@ void decrement ()
     }
 }
 
+void display_waiting() {
+    tinygl_clear();
+    tinygl_text("Waiting...");
+    while (1) {
+        tinygl_update();
+        if (ir_uart_read_ready_p()) {
+            int temp_character = ir_uart_getc();
+            if (0 <= temp_character && temp_character <= 255) {
+                letter_recieved = temp_character;
+                check_winner();
+            }
+        }
+    }
+
+}
+
+
+void check_winner() {
+    if (letter_sent == letter_recieved) {
+        while (1) {
+            display_character('T'); //tie
+        }
+    }
+
+    if (letter_sent == 0 && letter_recieved == 1) {
+        while (1) {
+            display_character('W');
+        }
+    } else if (letter_sent == 1 && letter_recieved == 2) {
+        while (1) {
+            display_character('W');
+        }
+    } else if (letter_sent == 2 && letter_recieved == 0) {
+        while (1) {
+            display_character('W');
+        }
+    } else {
+        while (1) {
+            display_character('L');
+        }
+    }
+
+}
+
 int main (void)
 {
     system_init (); // extract into init function
@@ -91,11 +137,17 @@ int main (void)
         }
         if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
            ir_uart_putc(letter);
+           letter_sent = letter;
+           if (letter_recieved != 3) {
+                display_waiting();
+                break;
+           }
+
         }
         if (ir_uart_read_ready_p()) {
             int temp_character = ir_uart_getc();
             if (0 <= temp_character && temp_character <= 255) {
-                letter = temp_character;
+                letter_recieved = temp_character;
             }
         }
         display_character(letter);
