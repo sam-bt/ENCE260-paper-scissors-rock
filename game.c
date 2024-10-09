@@ -17,14 +17,17 @@
 #define MESSAGE_RATE 10
 
 static int letter = 0;
-static int letter_recieved = 3;
-static int letter_sent = 3;
+static int letter_recieved = 10;
+static int letter_sent = 10;
 
 static const char charmap[] =
 {
     'P',
     'S',
-    'R'
+    'R',
+    'T',
+    'W',
+    'L'
 };
 
 void start_tinygl(void) {
@@ -84,29 +87,27 @@ void decrement ()
 
 
 void check_winner() {
+    while (1) {
+
     if (letter_sent == letter_recieved) {
-        while (1) {
-            display_character('T'); //tie
-        }
+        letter = 3;
     }
 
     if (letter_sent == 0 && letter_recieved == 1) {
-        while (1) {
-            display_character('W');
-        }
+            letter = 4;
     } else if (letter_sent == 1 && letter_recieved == 2) {
-        while (1) {
-            display_character('W');
-        }
+            letter = 4;
     } else if (letter_sent == 2 && letter_recieved == 0) {
-        while (1) {
-            display_character('W');
-        }
+            letter = 4;
     } else {
-        while (1) {
-            display_character('L');
-        }
+            letter = 5;
     }
+    letter_recieved = 10;
+    letter_sent = 10;
+    display_character(letter);
+
+    }
+
 
 }
 
@@ -139,7 +140,7 @@ int main (void)
         if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
            ir_uart_putc(letter);
            letter_sent = letter;
-           if (letter_recieved != 3) {
+           if (letter_recieved != 10) {
                 check_winner();
                 break;
            }
@@ -149,7 +150,7 @@ int main (void)
             int temp_character = ir_uart_getc();
             if (0 <= temp_character && temp_character <= 255) {
                 letter_recieved = temp_character;
-                if (letter_sent != 3) {
+                if (letter_sent != 10) {
                     check_winner();
                     break;
                 }
