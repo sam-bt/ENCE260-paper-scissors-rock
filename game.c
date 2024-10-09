@@ -147,11 +147,11 @@ void calculate_game() {
 
     char* result_string = build_result_string(wins);
     tinygl_clear();
+    tinygl_text(result_string);
 
     while (1) {
         pacer_wait();
         tinygl_update();
-        tinygl_text(result_string);
 
     }
 }
