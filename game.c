@@ -19,6 +19,7 @@
 static int letter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
+static int game_over = 0;
 
 static const char charmap[] =
 {
@@ -68,26 +69,8 @@ void decrement ()
     }
 }
 
-// void display_waiting() {
-//     tinygl_clear();
-//     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
-//     tinygl_text("Waiting...");
-//     while (1) {
-//         tinygl_update();
-//         if (ir_uart_read_ready_p()) {
-//             int temp_character = ir_uart_getc();
-//             if (0 <= temp_character && temp_character <= 255) {
-//                 letter_recieved = temp_character;
-//                 check_winner();
-//             }
-//         }
-//     }
-
-// }
-
 
 void check_winner() {
-    while (1) {
 
         if (letter_sent == letter_recieved) {
             letter = 3;
@@ -98,13 +81,12 @@ void check_winner() {
         } else if (letter_sent == 2 && letter_recieved == 0) {
                 letter = 4;
         } else {
-                letter = 5;
+            letter = 5;
         }
 
         letter_recieved = 10;
         letter_sent = 10;
-        display_character(letter);
-    }
+        game_over = 1;
 }
 
 int main (void)
@@ -121,35 +103,38 @@ int main (void)
         tinygl_update();
         navswitch_update();
 
-        if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
-			increment();
-		}	
-         if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
-           decrement();
-        }
-        if (navswitch_push_event_p (NAVSWITCH_EAST)) {
-			decrement();
-		}	
-        if (navswitch_push_event_p (NAVSWITCH_WEST)) {
-           increment();
-        }
-        if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
-           ir_uart_putc(letter);
-           letter_sent = letter;
-           if (letter_recieved != 10) {
-                check_winner();
-           }
+        if (!game_over) {
 
-        }
-        if (ir_uart_read_ready_p()) {
-            int temp_character = ir_uart_getc();
-            if (0 <= temp_character && temp_character <= 255) {
-                letter_recieved = temp_character;
-                if (letter_sent != 10) {
+            if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
+                increment();
+            }	
+            if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
+            decrement();
+            }
+            if (navswitch_push_event_p (NAVSWITCH_EAST)) {
+                decrement();
+            }	
+            if (navswitch_push_event_p (NAVSWITCH_WEST)) {
+            increment();
+            }
+            if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
+            ir_uart_putc(letter);
+            letter_sent = letter;
+            if (letter_recieved != 10) {
                     check_winner();
                 }
             }
+            if (ir_uart_read_ready_p()) {
+                int temp_character = ir_uart_getc();
+                if (0 <= temp_character && temp_character <= 255) {
+                    letter_recieved = temp_character;
+                    if (letter_sent != 10) {
+                        check_winner();
+                    }
+                }
+            }
         }
+
         display_character(letter);
 
     }
