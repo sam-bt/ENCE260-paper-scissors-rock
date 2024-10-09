@@ -5,6 +5,7 @@
     
     @defgroup game Game application
 */
+#include <stdio.h>
 #include "system.h"
 #include "pacer.h"
 #include "tinygl.h"
@@ -20,7 +21,11 @@
 static int letter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
-static int game_over = 0;
+static int round_over = 0;
+static int num_rounds = 5;
+static int round = 0;
+
+static char stats[11];
 
 static const char charmap[] =
 {
@@ -90,10 +95,40 @@ void check_winner() {
             letter = 4;
         }
 
+        stats[round] = charmap[letter];
+        round += 1;
         letter_recieved = 10;
         letter_sent = 10;
-        game_over = 1;
+        round_over = 1;
 }
+
+void calculate_game() {
+
+    int wins = 0, losses = 0, ties = 0;
+
+    for (int i = 0; i < 10 && stats[i] != '\0'; i++) {
+        if (stats[i] == 'W') {
+            wins++;
+        } else if (stats[i] == 'L') {
+            losses++;
+        } else if (stats[i] == 'T') {
+            ties++;
+        }
+    }
+
+    if (wins > losses && wins > ties) {
+        letter = 4;
+    } else if (losses > wins && losses > ties) {
+        letter = 5;
+    } else {
+        letter = 3;
+    }
+
+    while (1) {
+        display_character(letter);
+    }
+}
+
 
 int main (void)
 {
@@ -103,13 +138,12 @@ int main (void)
     pacer_init (500);
     ir_uart_init();
 
-    while (1)
-    {
+    while (round <= num_rounds) {
         pacer_wait();
         tinygl_update();
         navswitch_update();
 
-        if (!game_over) {
+        if (!round_over) {
 
             if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
                 increment();
@@ -146,10 +180,14 @@ int main (void)
             letter = 0;
             letter_recieved = 10;
             letter_sent = 10;
-            game_over = 0;
+            round_over = 0;
             }
 
         display_character(letter);
 
     }
+
+    stats[round+1] = '\0';
+    calculate_game();
+
 }
