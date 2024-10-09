@@ -65,22 +65,22 @@ void decrement ()
     }
 }
 
-void display_waiting() {
-    tinygl_clear();
-    tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
-    tinygl_text("Waiting...");
-    while (1) {
-        tinygl_update();
-        if (ir_uart_read_ready_p()) {
-            int temp_character = ir_uart_getc();
-            if (0 <= temp_character && temp_character <= 255) {
-                letter_recieved = temp_character;
-                check_winner();
-            }
-        }
-    }
+// void display_waiting() {
+//     tinygl_clear();
+//     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+//     tinygl_text("Waiting...");
+//     while (1) {
+//         tinygl_update();
+//         if (ir_uart_read_ready_p()) {
+//             int temp_character = ir_uart_getc();
+//             if (0 <= temp_character && temp_character <= 255) {
+//                 letter_recieved = temp_character;
+//                 check_winner();
+//             }
+//         }
+//     }
 
-}
+// }
 
 
 void check_winner() {
@@ -140,7 +140,7 @@ int main (void)
            ir_uart_putc(letter);
            letter_sent = letter;
            if (letter_recieved != 3) {
-                display_waiting();
+                check_winner();
                 break;
            }
 
@@ -149,6 +149,10 @@ int main (void)
             int temp_character = ir_uart_getc();
             if (0 <= temp_character && temp_character <= 255) {
                 letter_recieved = temp_character;
+                if (letter_sent != 3) {
+                    check_winner();
+                    break;
+                }
             }
         }
         display_character(letter);
