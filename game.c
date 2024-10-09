@@ -67,6 +67,7 @@ void decrement ()
 
 void display_waiting() {
     tinygl_clear();
+    tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
     tinygl_text("Waiting...");
     while (1) {
         tinygl_update();
