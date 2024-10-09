@@ -23,12 +23,12 @@ static int letter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
 static int round_over = 0;
-static int num_rounds = 3;
+static int num_rounds = 5;
 static int round = 0;
 
 static char stats[11];
 
-static const char charmap[] =
+static const char lettermap[] =
 {
     'P',
     'S',
@@ -37,6 +37,20 @@ static const char charmap[] =
     'W',
     'L'
 };
+
+static const char roundsmap[] =
+{
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9'
+};
+
 
 void start_tinygl(void) {
 
@@ -48,9 +62,9 @@ void start_tinygl(void) {
 
 }
 
-void display_character (int char_index)
+void display_character (const char* map, int char_index)
 {
-    char character = charmap[char_index];
+    char character = map[char_index];
 
     char buffer[2];
 
@@ -59,7 +73,7 @@ void display_character (int char_index)
     tinygl_text (buffer);
 }
 
-void increment () 
+void increment_letter () 
 {
     if (letter == 2) {
         letter = 0;
@@ -68,12 +82,30 @@ void increment ()
     }
 }
 
-void decrement () 
+void decrement_letter () 
 {
     if (letter == 0) {
         letter = 2;
     } else {
         letter -= 1;
+    }
+}
+
+void increment_rounds () 
+{
+    if (num_rounds == 9) {
+        num_rounds = 1;
+    } else {
+        num_rounds += 1;
+    }
+}
+
+void decrement_rounds () 
+{
+    if (num_rounds == 1) {
+        num_rounds = 9;
+    } else {
+        num_rounds -= 1;
     }
 }
 
@@ -96,7 +128,7 @@ void check_winner() {
             letter = 4;
         }
 
-        stats[round] = charmap[letter];
+        stats[round] = lettermap[letter];
         round += 1;
         letter_recieved = 10;
         letter_sent = 10;
@@ -137,14 +169,6 @@ void calculate_game() {
         }
     }
 
-    if (wins > losses && wins > ties) {
-        letter = 4;
-    } else if (losses > wins && losses > ties) {
-        letter = 5;
-    } else {
-        letter = 3;
-    }
-
     char* result_string = build_result_string(wins);
     tinygl_clear();
     tinygl_text(result_string);
@@ -165,6 +189,41 @@ int main (void)
     pacer_init (500);
     ir_uart_init();
 
+    while (1) {
+        pacer_wait();
+        tinygl_update();
+        navswitch_update();
+
+        if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
+            increment_rounds();
+        }	
+        if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
+            decrement_rounds();
+        }
+        if (navswitch_push_event_p (NAVSWITCH_EAST)) {
+            decrement_rounds();
+        }	
+        if (navswitch_push_event_p (NAVSWITCH_WEST)) {
+            increment_rounds();
+        }
+        if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
+            ir_uart_putc(num_rounds);
+            num_rounds = num_rounds;
+            break;
+            }
+        if (ir_uart_read_ready_p()) {
+                int temp_num_rounds = ir_uart_getc();
+                if (0 <= temp_num_rounds && temp_num_rounds <= 255) {
+                    num_rounds = temp_num_rounds;
+                    break;
+                }
+            }
+
+    display_character(roundsmap, num_rounds-1);
+
+    }
+
+
     while (round < num_rounds) {
         pacer_wait();
         tinygl_update();
@@ -173,16 +232,16 @@ int main (void)
         if (!round_over) {
 
             if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
-                increment();
+                increment_letter();
             }	
             if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
-            decrement();
+            decrement_letter();
             }
             if (navswitch_push_event_p (NAVSWITCH_EAST)) {
-                decrement();
+                decrement_letter();
             }	
             if (navswitch_push_event_p (NAVSWITCH_WEST)) {
-            increment();
+            increment_letter();
             }
             if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
             ir_uart_putc(letter);
@@ -210,7 +269,7 @@ int main (void)
             round_over = 0;
             }
 
-        display_character(letter);
+        display_character(lettermap, letter);
 
     }
 
