@@ -6,6 +6,7 @@
     @defgroup game Game application
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include "system.h"
 #include "pacer.h"
 #include "tinygl.h"
@@ -102,6 +103,26 @@ void check_winner() {
         round_over = 1;
 }
 
+char* build_result_string(int won) {
+
+    char* result_string = malloc(80 * sizeof(char));
+
+    if (result_string == NULL) {
+        return NULL;
+    }
+
+    int rounds_lost = num_rounds - won;
+
+    if (won > num_rounds / 2) {
+        snprintf(result_string, 80, "You Win! Won %d/%d rounds", won, num_rounds);
+    } else if (won < num_rounds / 2) {
+        snprintf(result_string, 80, "You Lose! Won %d/%d rounds", won, num_rounds);
+    } else {
+        snprintf(result_string, 80, "You drew! Won %d/%d rounds, Lost %d/%d rounds", won, num_rounds, rounds_lost, num_rounds);
+    }
+    return result_string;
+}
+
 void calculate_game() {
 
     int wins = 0, losses = 0, ties = 0;
@@ -124,10 +145,13 @@ void calculate_game() {
         letter = 3;
     }
 
+    char* result_string = build_result_string(wins);
+    tinygl_clear();
+
     while (1) {
         pacer_wait();
         tinygl_update();
-        display_character(letter);
+        tinygl_text(result_string);
 
     }
 }
@@ -141,7 +165,7 @@ int main (void)
     pacer_init (500);
     ir_uart_init();
 
-    while (round <= num_rounds) {
+    while (round < num_rounds) {
         pacer_wait();
         tinygl_update();
         navswitch_update();
