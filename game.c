@@ -139,12 +139,12 @@ int main (void)
             }
         }
 
-        if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
-            letter = 0;
-            letter_recieved = 10;
-            letter_sent = 10;
-            game_over = 0;
-            }
+        // if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
+        //     letter = 0;
+        //     letter_recieved = 10;
+        //     letter_sent = 10;
+        //     game_over = 0;
+        //     }
 
         display_character(letter);
 
