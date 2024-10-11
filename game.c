@@ -17,9 +17,12 @@
 #include "button.h"
 
 #define PACER_RATE 500
+#define ANIMATION_RATE 150
 #define MESSAGE_RATE 18
 
 static int letter = 0;
+static int animation_index = 0;
+static int animation_delay_counter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
 static int round_over = 0;
@@ -51,8 +54,132 @@ static const char roundsmap[] =
     '9'
 };
 
+const int rock_bitmap[4][7] = {
+    {    
+        0b11100,
+        0b11110,
+        0b11100,
+        0b11000,
+        0b00000,
+        0b00000,
+        0b00000
 
-void start_tinygl(void) {
+    },
+    {    
+        0b00000,
+        0b01110,
+        0b11111,
+        0b11110,
+        0b01100,
+        0b00000,
+        0b00000
+    },
+    {    
+        0b00000,
+        0b00000,
+        0b00000,
+        0b11100,
+        0b11110,
+        0b11100,
+        0b11000,
+    },
+    {    
+        0b00000,
+        0b00000,
+        0b01110,
+        0b11111,
+        0b11110,
+        0b01100,
+        0b00000,
+    }
+};
+
+const int paper_bitmap[4][7] = {
+    {
+        0b11111,
+        0b10001,
+        0b10001,
+        0b10001,
+        0b10001,
+        0b10001,
+        0b11111
+    },
+    {
+        0b00000,
+        0b01110,
+        0b01010,
+        0b01010,
+        0b01010,
+        0b01110,
+        0b00000
+    },
+    {
+        0b0000,
+        0b00000,
+        0b00100,
+        0b00100,
+        0b00100,
+        0b00000,
+        0b00000
+    },
+    {
+        0b00000,
+        0b01110,
+        0b01010,
+        0b01010,
+        0b01010,
+        0b01110,
+        0b00000
+    },
+};
+
+
+const int scissors_bitmap[4][7] = {
+
+    {
+        0b00100,
+        0b01110,
+        0b11111,
+        0b00100,
+        0b01110,
+        0b10001,
+        0b01110
+
+    },
+    {
+        0b01010,
+        0b01010,
+        0b10001,
+        0b00100,
+        0b01010,
+        0b10101,
+        0b01010
+
+    },
+    {
+        0b10001,
+        0b01010,
+        0b00100,
+        0b00100,
+        0b01010,
+        0b10001,
+        0b01110
+
+    },
+    {
+        0b01010,
+        0b01010,
+        0b10001,
+        0b00100,
+        0b01010,
+        0b10101,
+        0b01010
+    },
+};
+
+
+void start_tinygl(void) 
+{
 
     tinygl_init (PACER_RATE);
     tinygl_font_set (&font5x5_1);
@@ -62,8 +189,42 @@ void start_tinygl(void) {
 
 }
 
+void increment_animation_delay ()
+{
+    if (animation_delay_counter >= ANIMATION_RATE) {
+        animation_index = (animation_index + 1) % 4;  
+        animation_delay_counter = 0;  
+    } else {
+        animation_delay_counter++;
+    }
+}
+
+void tinygl_display_bitmap(const int bitmap[3][7]) {
+    tinygl_clear();
+    for (int y = 0; y < 7; y++) {
+        for (int x = 0; x < 5; x++) {
+            if (bitmap[animation_index][y] & (1 << (4 - x))) {
+                tinygl_draw_point(tinygl_point(x, y), 1);
+            }
+        }
+    }
+    tinygl_update();
+}
+
+
 void display_character (const char* map, int char_index)
 {
+
+    increment_animation_delay();
+
+    if (map[char_index] == 'R') {
+        tinygl_display_bitmap(rock_bitmap);
+    } else if (map[char_index] == 'P') {
+        tinygl_display_bitmap(paper_bitmap);
+    } else if (map[char_index] == 'S') {
+        tinygl_display_bitmap(scissors_bitmap);
+    } else {
+
     char character = map[char_index];
 
     char buffer[2];
@@ -71,6 +232,9 @@ void display_character (const char* map, int char_index)
     buffer[0] = character;
     buffer[1] = '\0';
     tinygl_text (buffer);
+
+    }
+
 }
 
 void increment_letter () 
@@ -110,7 +274,8 @@ void decrement_rounds ()
 }
 
 
-void check_winner() {
+void check_winner() 
+{
 
         if (letter_sent == letter_recieved) { // same so tie
             letter = 3;
@@ -135,7 +300,8 @@ void check_winner() {
         round_over = 1;
 }
 
-char* build_result_string(int won) {
+char* build_result_string(int won) 
+{
 
     char* result_string = malloc(80 * sizeof(char));
 
@@ -155,7 +321,8 @@ char* build_result_string(int won) {
     return result_string;
 }
 
-void calculate_game() {
+void calculate_game() 
+{
 
     int wins = 0, losses = 0, ties = 0;
 
@@ -259,15 +426,17 @@ int main (void)
                     }
                 }
             }
-        }
+        } else {
 
         button_update ();
         if (button_push_event_p(0)) {
             letter = 0;
             letter_recieved = 10;
-            letter_sent = 10;
+            letter_sent = 10; // inside/outside game_over?
             round_over = 0;
             }
+
+        }
 
         display_character(lettermap, letter);
 
