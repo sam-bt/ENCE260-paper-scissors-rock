@@ -3,7 +3,7 @@
     @date   8 Oct 2024
     @brief  Rock paper scissors game
     
-    @defgroup game Game application
+    @defgroup Game application
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -426,17 +426,16 @@ int main (void)
                     }
                 }
             }
-        } else {
+        }
 
         button_update ();
         if (button_push_event_p(0)) {
             letter = 0;
             letter_recieved = 10;
-            letter_sent = 10; // inside/outside game_over?
+            letter_sent = 10;
             round_over = 0;
             }
 
-        }
 
         display_character(lettermap, letter);
 
