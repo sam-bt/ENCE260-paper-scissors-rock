@@ -28,6 +28,7 @@ static int letter_sent = 10;
 static int round_over = 0;
 static int num_rounds = 5;
 static int round = 0;
+static int reset = 0;
 
 static char stats[11];
 
@@ -176,7 +177,6 @@ const int scissors_bitmap[4][7] = {
         0b01010
     },
 };
-
 
 void start_tinygl(void) 
 {
@@ -414,6 +414,7 @@ int main (void)
             ir_uart_putc(letter);
             letter_sent = letter;
             if (letter_recieved != 10) {
+                    tinygl_clear();
                     check_winner();
                 }
             }
@@ -422,6 +423,7 @@ int main (void)
                 if (0 <= temp_character && temp_character <= 255) {
                     letter_recieved = temp_character;
                     if (letter_sent != 10) {
+                        tinygl_clear();
                         check_winner();
                     }
                 }
