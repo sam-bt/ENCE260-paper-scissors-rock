@@ -1,5 +1,12 @@
+/** @file   arithmetic.c
+    @author Samuel Beattie, Lachlan McLean
+    @date   14 Oct 2024
+    @brief  Contains methods that perform arithmetic on variables
+*/
+
 #include "arithmetic.h"
 
+// Function to increment the animation counter
 void increment_animation_delay ()
 {
     if (animation_delay_counter >= ANIMATION_RATE) {
@@ -10,6 +17,7 @@ void increment_animation_delay ()
     }
 }
 
+// Function to scroll upwards (wraps) through the letters
 void increment_letter () 
 {
     if (letter == 2) {
@@ -19,6 +27,7 @@ void increment_letter ()
     }
 }
 
+// Function to scroll downwards (wraps) through the letters
 void decrement_letter () 
 {
     if (letter == 0) {
@@ -28,19 +37,21 @@ void decrement_letter ()
     }
 }
 
+// Function to increase the number of rounds
 void increment_rounds () 
 {
-    if (num_rounds == 9) {
+    if (num_rounds == MAX_ROUNDS) {
         num_rounds = 1;
     } else {
         num_rounds += 1;
     }
 }
 
+// Function to increase the number of rounds
 void decrement_rounds () 
 {
     if (num_rounds == 1) {
-        num_rounds = 9;
+        num_rounds = MAX_ROUNDS;
     } else {
         num_rounds -= 1;
     }

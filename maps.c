@@ -1,3 +1,9 @@
+/** @file   maps.c
+    @author Samuel Beattie, Lachlan McLean
+    @date   14 Oct 2024
+    @brief  Contains the char and bitmaps for the game
+*/
+
 #include "maps.h"
 
 const char lettermap[] =
@@ -23,6 +29,7 @@ const char roundsmap[] =
     '9'
 };
 
+// Bitmap for the rocks animation
 const int rock_bitmap[4][7] = {
     {    
         0b11100,
@@ -63,6 +70,7 @@ const int rock_bitmap[4][7] = {
     }
 };
 
+// Bitmap for the paper animation
 const int paper_bitmap[4][7] = {
     {
         0b11111,
@@ -102,7 +110,7 @@ const int paper_bitmap[4][7] = {
     },
 };
 
-
+// Bitmap for the scissors animation
 const int scissors_bitmap[4][7] = {
 
     {
