@@ -5,6 +5,7 @@
     
     @defgroup Game application
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "system.h"
@@ -15,168 +16,22 @@
 #include "../fonts/font5x5_1.h"
 #include "ir_uart.h"
 #include "button.h"
+#include "maps.h"
+#include "arithmetic.h"
 
 #define PACER_RATE 500
-#define ANIMATION_RATE 150
 #define MESSAGE_RATE 18
 
-static int letter = 0;
-static int animation_index = 0;
-static int animation_delay_counter = 0;
+int letter = 0;
+int animation_index = 0;
+int animation_delay_counter = 0;
 static int letter_recieved = 10;
 static int letter_sent = 10;
 static int round_over = 0;
-static int num_rounds = 5;
+int num_rounds = 5;
 static int round = 0;
-static int reset = 0;
 
 static char stats[11];
-
-static const char lettermap[] =
-{
-    'P',
-    'S',
-    'R',
-    'T',
-    'W',
-    'L'
-};
-
-static const char roundsmap[] =
-{
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9'
-};
-
-const int rock_bitmap[4][7] = {
-    {    
-        0b11100,
-        0b11110,
-        0b11100,
-        0b11000,
-        0b00000,
-        0b00000,
-        0b00000
-
-    },
-    {    
-        0b00000,
-        0b01110,
-        0b11111,
-        0b11110,
-        0b01100,
-        0b00000,
-        0b00000
-    },
-    {    
-        0b00000,
-        0b00000,
-        0b00000,
-        0b11100,
-        0b11110,
-        0b11100,
-        0b11000,
-    },
-    {    
-        0b00000,
-        0b00000,
-        0b01110,
-        0b11111,
-        0b11110,
-        0b01100,
-        0b00000,
-    }
-};
-
-const int paper_bitmap[4][7] = {
-    {
-        0b11111,
-        0b10001,
-        0b10001,
-        0b10001,
-        0b10001,
-        0b10001,
-        0b11111
-    },
-    {
-        0b00000,
-        0b01110,
-        0b01010,
-        0b01010,
-        0b01010,
-        0b01110,
-        0b00000
-    },
-    {
-        0b0000,
-        0b00000,
-        0b00100,
-        0b00100,
-        0b00100,
-        0b00000,
-        0b00000
-    },
-    {
-        0b00000,
-        0b01110,
-        0b01010,
-        0b01010,
-        0b01010,
-        0b01110,
-        0b00000
-    },
-};
-
-
-const int scissors_bitmap[4][7] = {
-
-    {
-        0b00100,
-        0b01110,
-        0b11111,
-        0b00100,
-        0b01110,
-        0b10001,
-        0b01110
-
-    },
-    {
-        0b01010,
-        0b01010,
-        0b10001,
-        0b00100,
-        0b01010,
-        0b10101,
-        0b01010
-
-    },
-    {
-        0b10001,
-        0b01010,
-        0b00100,
-        0b00100,
-        0b01010,
-        0b10001,
-        0b01110
-
-    },
-    {
-        0b01010,
-        0b01010,
-        0b10001,
-        0b00100,
-        0b01010,
-        0b10101,
-        0b01010
-    },
-};
 
 void start_tinygl(void) 
 {
@@ -187,16 +42,6 @@ void start_tinygl(void)
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
     button_init();
 
-}
-
-void increment_animation_delay ()
-{
-    if (animation_delay_counter >= ANIMATION_RATE) {
-        animation_index = (animation_index + 1) % 4;  
-        animation_delay_counter = 0;  
-    } else {
-        animation_delay_counter++;
-    }
 }
 
 void tinygl_display_bitmap(const int bitmap[3][7]) {
@@ -236,43 +81,6 @@ void display_character (const char* map, int char_index)
     }
 
 }
-
-void increment_letter () 
-{
-    if (letter == 2) {
-        letter = 0;
-    } else {
-        letter += 1;
-    }
-}
-
-void decrement_letter () 
-{
-    if (letter == 0) {
-        letter = 2;
-    } else {
-        letter -= 1;
-    }
-}
-
-void increment_rounds () 
-{
-    if (num_rounds == 9) {
-        num_rounds = 1;
-    } else {
-        num_rounds += 1;
-    }
-}
-
-void decrement_rounds () 
-{
-    if (num_rounds == 1) {
-        num_rounds = 9;
-    } else {
-        num_rounds -= 1;
-    }
-}
-
 
 void check_winner() 
 {
@@ -353,7 +161,7 @@ int main (void)
     system_init (); // extract into init function
     start_tinygl();
     navswitch_init();
-    pacer_init (500);
+    pacer_init (PACER_RATE);
     ir_uart_init();
 
     while (1) {
