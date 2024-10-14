@@ -18,6 +18,7 @@
 #include "button.h"
 #include "maps.h"
 #include "arithmetic.h"
+#include "game_display.h"
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 18
@@ -41,44 +42,6 @@ void start_tinygl(void)
     tinygl_text_speed_set (MESSAGE_RATE);
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
     button_init();
-
-}
-
-void tinygl_display_bitmap(const int bitmap[3][7]) {
-    tinygl_clear();
-    for (int y = 0; y < 7; y++) {
-        for (int x = 0; x < 5; x++) {
-            if (bitmap[animation_index][y] & (1 << (4 - x))) {
-                tinygl_draw_point(tinygl_point(x, y), 1);
-            }
-        }
-    }
-    tinygl_update();
-}
-
-
-void display_character (const char* map, int char_index)
-{
-
-    increment_animation_delay();
-
-    if (map[char_index] == 'R') {
-        tinygl_display_bitmap(rock_bitmap);
-    } else if (map[char_index] == 'P') {
-        tinygl_display_bitmap(paper_bitmap);
-    } else if (map[char_index] == 'S') {
-        tinygl_display_bitmap(scissors_bitmap);
-    } else {
-
-    char character = map[char_index];
-
-    char buffer[2];
-
-    buffer[0] = character;
-    buffer[1] = '\0';
-    tinygl_text (buffer);
-
-    }
 
 }
 

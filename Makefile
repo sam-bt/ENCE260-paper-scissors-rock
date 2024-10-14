@@ -25,6 +25,9 @@ maps.o: maps.c
 arithmetic.o: arithmetic.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
+game_display.o: game_display.c maps.h ../../utils/tinygl.h arithmetic.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
 pio.o: ../../drivers/avr/pio.c ../../drivers/avr/pio.h ../../drivers/avr/system.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
@@ -68,7 +71,7 @@ button.o: ../../drivers/button.c ../../drivers/avr/pio.h ../../drivers/avr/syste
 	$(CC) -c $(CFLAGS) $< -o $@
 
 # Link: create output file (executable) from object files.
-game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o ir_uart.o prescale.o usart1.o timer0.o button.o maps.o arithmetic.o
+game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o ir_uart.o prescale.o usart1.o timer0.o button.o maps.o arithmetic.o game_display.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
