@@ -1,6 +1,6 @@
-This directory contains all the files needed to play the game of rock paper sciccors.
+This repository contains C code to build and run a paper scissors rock game on the ATmega32u2 microcontroller (UCFunkit)
 
-The game files should be stored at the same level as any of the apps in the labs folder provided to allow the makefile to connect to the api functions
+The code uses various API functions defined by the University of Canterbury to aid in the making of this game.
 
 make            --- builds the application for the ATmega32u2
 
